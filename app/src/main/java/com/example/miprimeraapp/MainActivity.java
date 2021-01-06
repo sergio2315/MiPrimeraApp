@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private boolean clickSignos = false;
     private boolean clickSignoRestar = false;
-
+    private boolean clickSignoIgual = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                 binding.NumberOne.setText("");
                 binding.textViewMain.setText("" + 0);
                 clickSignoRestar = false;
+                clickSignos = false;
+                clickSignoIgual = false;
             }
         });
         binding.btnPunto.setOnClickListener(new View.OnClickListener() {
@@ -144,15 +146,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         binding.btnSumar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (binding.textViewMain.getText()!="0"&&clickSignoIgual==true){
+                    binding.NumberOne.setText("" + binding.textViewMain.getText()+"+");//reutilizar resultado para seguir calculando
+                    clickSignos = true;
+                }
                 if (binding.NumberOne.getText().toString().endsWith("*")//reemplaza ultimo caracter por signo +
                         ||binding.NumberOne.getText().toString().endsWith("/")
                         ||binding.NumberOne.getText().toString().endsWith("-")) {
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0,binding.NumberOne.getText().length()-1)+ "+");
                 }
-                if (binding.NumberOne.length() != 0 && clickSignos == false) {
+                if (binding.NumberOne.length() != 0 && clickSignos == false && clickSignoRestar==false) {
                     binding.NumberOne.setText(binding.NumberOne.getText() + "+");
                     clickSignos = true;
                     clickSignoRestar = false;
@@ -162,10 +169,14 @@ public class MainActivity extends AppCompatActivity {
         binding.btnRestar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (binding.textViewMain.getText()!="0"&&clickSignoIgual==true){
+                    binding.NumberOne.setText("" + binding.textViewMain.getText()+"-");//reutilizar resultado para seguir calculando
+                    clickSignoRestar=true;
+                }
                 if (binding.NumberOne.getText().toString().endsWith("+")){
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0,binding.NumberOne.getText().length()-1)+ "-");
                 }
-                else if (binding.NumberOne.length() >= 0 &&clickSignoRestar==false) {
+                if (binding.NumberOne.length() >= 0 &&clickSignoRestar==false) {
                     binding.NumberOne.setText(binding.NumberOne.getText() + "-");
                     clickSignoRestar = true;
                 }
@@ -174,13 +185,18 @@ public class MainActivity extends AppCompatActivity {
         binding.btnMultiplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (binding.NumberOne.getText().toString().endsWith("-") //reemplaza ultimo caracter por signo +
+                if (binding.textViewMain.getText()!="0"&&clickSignoIgual==true){
+                    binding.NumberOne.setText("" + binding.textViewMain.getText()+"*");//reutilizar resultado para seguir calculando
+                    clickSignos = true;
+                    clickSignoRestar=false;
+                    clickSignoIgual=false;
+                }
+                if (binding.NumberOne.getText().toString().endsWith("-")
                        || binding.NumberOne.getText().toString().endsWith("+")
-                        &&clickSignoRestar==false
                        || binding.NumberOne.getText().toString().endsWith("/")){
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0,binding.NumberOne.getText().length()-1)+ "*");
                 }
-                if (binding.NumberOne.length() != 0 && clickSignos == false) {
+                if (binding.NumberOne.length() != 0 && clickSignos == false&&clickSignoRestar==false&&clickSignoIgual==false) {
                     binding.NumberOne.setText(binding.NumberOne.getText() + "*");
                     clickSignos = true;
                     clickSignoRestar = false;
@@ -190,18 +206,25 @@ public class MainActivity extends AppCompatActivity {
         binding.btnDividir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (binding.NumberOne.getText().toString().endsWith("-") //reemplaza ultimo caracter por signo +
+                if (binding.textViewMain.getText()!="0"&&clickSignoIgual==true){
+                    binding.NumberOne.setText("" + binding.textViewMain.getText()+"/");//reutilizar resultado para seguir calculando
+                    clickSignos = true;
+                    clickSignoRestar=false;
+                    clickSignoIgual=false;
+                }
+                if (binding.NumberOne.getText().toString().endsWith("-")
                         || binding.NumberOne.getText().toString().endsWith("+")
                         || binding.NumberOne.getText().toString().endsWith("*")) {
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0,binding.NumberOne.getText().length()-1)+ "/");
                 }
-                if (binding.NumberOne.length() != 0 && clickSignos == false&&clickSignoRestar==false) {
+                if (binding.NumberOne.length() != 0 && clickSignos == false&&clickSignoRestar==false&&clickSignoIgual==false) {
                     binding.NumberOne.setText(binding.NumberOne.getText() + "/");
                     clickSignos = true;
                     clickSignoRestar = false;
                 }
             }
         });
+        
         binding.btnIgual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,11 +253,16 @@ public class MainActivity extends AppCompatActivity {
                     char operador1 = binding.NumberOne.getText().charAt(largoNum1);
                     double num1 = Double.parseDouble(pantalla[0]);
                     double num2 = Double.parseDouble(pantalla[1]);
+                    double numResultado = Double.parseDouble(binding.textViewMain.getText().toString());
                     //int num3 = Integer.parseInt(pantalla[2]);
                     if (binding.NumberOne.getText().charAt(0) != '-') {
                         switch (operador1) {
                             case '+':
-                                resultado = num1 + num2;
+                                if (binding.NumberOne.getText().charAt(0) != '+'){
+                                    resultado = num1 + num2;
+                                }else {
+                                    resultado = num1 + num2;
+                                }
                                 break;
                             case '-':
                                 resultado = num1 - num2;
@@ -258,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         // String resultadoFinal= String.format("%.4f",resultado); linea para limitar decimales
                         binding.textViewMain.setText("" + resultado);
+
                     } else {
                         operador1 = binding.NumberOne.getText().charAt(largoNum1 + 1);
                         switch (operador1) {
@@ -288,6 +317,8 @@ public class MainActivity extends AppCompatActivity {
                         binding.textViewMain.setText("" + resultado);
                     }
                 }
+                binding.NumberOne.setText("");
+                clickSignoIgual=true;
             }
         });
         binding.btnOff.setOnClickListener(new View.OnClickListener() {
