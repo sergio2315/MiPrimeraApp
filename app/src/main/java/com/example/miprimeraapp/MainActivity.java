@@ -119,6 +119,15 @@ public class MainActivity extends AppCompatActivity {
         binding.btnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (binding.NumberOne.getText().toString().endsWith("-")) {
+                    clickSignoRestar=false;
+                }
+                if (binding.NumberOne.getText().toString().endsWith("+")
+                        || binding.NumberOne.getText().toString().endsWith("*")
+                        || binding.NumberOne.getText().toString().endsWith("/")
+                        || binding.NumberOne.getText().toString().endsWith(".")) {
+                    clickSignos=false;
+                }
                 if (binding.NumberOne.length() != 0) {
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0, binding.NumberOne.length() - 1));
                     clickSignos = false;
@@ -176,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 if (binding.NumberOne.getText().toString().endsWith("+")){
                     binding.NumberOne.setText(binding.NumberOne.getText().subSequence(0,binding.NumberOne.getText().length()-1)+ "-");
                 }
-                if (binding.NumberOne.length() >= 0 &&clickSignoRestar==false) {
+                else if (binding.NumberOne.length() >= 0 &&clickSignoRestar==false) {
                     binding.NumberOne.setText(binding.NumberOne.getText() + "-");
                     clickSignoRestar = true;
                 }
@@ -253,16 +262,11 @@ public class MainActivity extends AppCompatActivity {
                     char operador1 = binding.NumberOne.getText().charAt(largoNum1);
                     double num1 = Double.parseDouble(pantalla[0]);
                     double num2 = Double.parseDouble(pantalla[1]);
-                    double numResultado = Double.parseDouble(binding.textViewMain.getText().toString());
-                    //int num3 = Integer.parseInt(pantalla[2]);
+                    //double num3 = Double.parseDouble(pantalla[2]);
                     if (binding.NumberOne.getText().charAt(0) != '-') {
                         switch (operador1) {
                             case '+':
-                                if (binding.NumberOne.getText().charAt(0) != '+'){
                                     resultado = num1 + num2;
-                                }else {
-                                    resultado = num1 + num2;
-                                }
                                 break;
                             case '-':
                                 resultado = num1 - num2;
@@ -286,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         // String resultadoFinal= String.format("%.4f",resultado); linea para limitar decimales
                         binding.textViewMain.setText("" + resultado);
-
                     } else {
                         operador1 = binding.NumberOne.getText().charAt(largoNum1 + 1);
                         switch (operador1) {
